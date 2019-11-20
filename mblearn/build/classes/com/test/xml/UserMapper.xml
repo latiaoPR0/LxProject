@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.dao.UserDao">
+	<!-- <cache eviction="FIFO" flushInterval="60000" siz="512" readOnly="true" 
+		/> -->
+	<select id="count" resultType="int">
+		select count(1) as count from
+		s_user
+	</select>
+
+	<select id="findUserById" resultType="com.test.entity.User"
+		parameterType="com.test.entity.User" useCache="true">
+		select * from s_user
+		where id=#{id}
+	</select>
+
+	<select id="findUserByNameAndId"
+		resultType="com.test.entity.User" parameterType="com.test.entity.User">
+		select * from s_user
+		where id=#{id} and userName=#{userName}
+	</select>
+
+	<select id="findUserListByNameAndRoleId"
+		resultMap="userRoleResult">
+		select u.*,r.roleName from s_user u,s_role r where u.userRole=r.id
+		<if test="userRole!=null">
+			and u.userRole=#{userRole}
+		</if>
+		<if test="userName!=null and userName!=''">
+			and u.userName like CONCAT('%',#{userName},'%')
+		</if>
+	</select>
+
+	<select id="findUserByLikeUserName"
+		resultType="com.test.entity.User" parameterType="com.test.entity.User">
+		select * from s_user
+		where userName like CONCAT('%',#{userName},'%')
+	</select>
+
+
+	<resultMap type="com.test.entity.User" id="userRoleResult">
+		<id property="id" column="id" />
+		<result property="userCode" column="userCode" />
+		<result property="userName" column="userName" />
+		<result property="userRole" column="userRole" />
+		<association property="role"
+			javaType="com.test.entity.Role" resultMap="roleResult" />
+	</resultMap>
+	<resultMap type="com.test.entity.Role" id="roleResult">
+		<id property="id" column="id" />
+		<result property="roleCode" column="roleCode" />
+		<result property="roleName" column="roleName" />
+	</resultMap>
+
+	<select id="findUserByRoleId" resultMap="userRoleResult"
+		parameterType="Integer">
+		select u.*,r.id as r_id,r.roleCode,r.roleName
+		from s_user
+		u,s_role r
+		where u.userRole=#{userRole} and u.userRole=r.id
+	</select>
+	
+	<select id="getUserList" resultType="com.test.entity.User" parameterType="com.test.entity.User">
+		select * from s_user u
+		<where>
+			<if test="userRole!=null">
+				and u.userRole=#{userRole}
+			</if>
+			<if test="userName!=null and userName!=''">
+				and u.userName like CONCAT('%',#{userName},'%')
+			</if>
+		</where>
+	</select>
+	
+	<select id="findAddressListByUserId"
+		resultMap="userAdressResult" parameterType="Integer">
+		select u.*,a.id as
+		a_id,a.content,a.addressDesc,a.postCode,a.tel
+		from s_user u,s_address a
+		where u.id=#{id} and u.id=a.userId
+	</select>
+	
+	<resultMap type="com.test.entity.User" id="userAdressResult">
+		<id property="id" column="id" />
+		<result property="userCode" column="userCode" />
+		<result property="userName" column="userName" />
+		<result property="userRole" column="userRole" />
+		<collection property="addressList"
+			ofType="com.test.entity.Address">
+			<id property="id" column="id" />
+			<result property="content" column="content" />
+			<result property="addressDesc" column="addressDesc" />
+			<result property="pstCode" column="pstCode" />
+			<result property="tel" column="tel" />
+		</collection>
+	</resultMap>
+
+	
+
+
+
+	<insert id="addUser" parameterType="com.test.entity.User">
+		insert into
+		s_user(id,user_code,user_name,user_password,gender,birthday,phone,address,user_role,create_by,creation_date)
+		Values
+		(#{id},#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{userRole},#{createdBy},#{creationDate})
+	</insert>
+
+	<update id="modifyUser" parameterType="com.test.entity.User">
+		update s_user set
+		user_code=#{userCode},user_name=#{userName},user_password=#{userPassword},
+		phone=#{phone},address=#{address},user_role=#{userRole},
+		user_role=#{userRole}, modify_date=#{modifyDate},birthday=#{birthday}
+		where id=#{id}
+	</update>
+
+	<update id="updatePwd" parameterType="com.test.entity.User">
+		update s_user set
+		user_password=#{userPassword} where id=#{id}
+	</update>
+
+	<update id="deleteUser" parameterType="com.test.entity.User">
+		delete from s_user where
+		id=#{id}
+	</update>
+
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx = "http://www.springframework.org/schema/tx"
+
+xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd
+ ">
+	
+	<context:component-scan base-package="com.test.zhujie"/>
+	
+	
+	<bean id="helloSpring" class="com.test.iocdi.HelloSpring">
+		<property name="name">
+			<value>xlglvc</value>
+		</property>
+	</bean>
+	
+	<bean id="entrustPerson" class="com.test.proxy.EntrustPerson">
+		<property name="vacancies">
+			<value>1000</value>
+		</property>
+		<property name="spendHour">
+			<value>0</value>
+		</property>
+	</bean>
+	
+	
+	<bean id="loggerAop" class="com.test.proxy.LoggerAop"/>
+	
+	
+	
+	<aop:config proxy-target-class="true">
+		<aop:pointcut id="runMethod" expression="execution(* com.test.proxy.*.*(..))" />
+		<aop:aspect id="logAop" ref="loggerAop">
+			<aop:before method="startProcess" pointcut-ref="runMethod"/>
+		</aop:aspect>
+	</aop:config>
+	
+</beans>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<!--配置数据源信息-->
+	<properties resource="jdbc.properties"/>
+	<!--配置1og4j-->
+	<settings>
+		<setting name="logImpl" value="LOG4J"/>
+		<!-- NONE：禁止自动匹配
+		PARTIAL（默认）：自动匹配所有属性，有内部嵌套（association、collection）除外
+		FULL：自动匹配属性 -->
+		<setting name="autoMappingBehavior" value="FULL"/>
+		<setting name="cacheEnabled" value="true"/>
+	</settings>
+	<!-- 
+		获取数据库连接实例的数据源（DataSource）和决定事务作用域和控制方式的事务管理器（TransactionManager）
+	 -->
+
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC"></transactionManager>
+			<!--POOLED自带数据源，JNDI基于Tomcat的数据源-->
+			<dataSource type="POOLED">
+				<property name="driver" value="${driverClassName}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	<!--程序中所用到sq1映射文件都在这里列出，这些映射sq1都被Mybatis管理-->
+	<mappers>
+		<mapper resource="com/test/xml/UserMapper.xmL"/>
+	</mappers>
+</configuration>
